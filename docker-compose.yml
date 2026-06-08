@@ -1,0 +1,26 @@
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gopher-gate
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  api-service:
+    image: nginx:alpine
+    container_name: api-service
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
